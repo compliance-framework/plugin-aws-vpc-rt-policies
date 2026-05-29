@@ -1,1 +1,13 @@
-{}
+{
+  "required_route_table_tags": [
+    "Environment",
+    "Owner",
+    "compliance"
+  ],
+  "allow_unassociated_route_tables": false,
+  "allow_main_route_table_public_routes": false,
+  "allow_non_main_route_table_direct_internet_gateway_routes": false,
+  "allow_route_table_default_transit_gateway_routes": false,
+  "approved_route_table_transit_gateway_ids": [],
+  "approved_route_table_vpc_peering_connection_ids": []
+}
