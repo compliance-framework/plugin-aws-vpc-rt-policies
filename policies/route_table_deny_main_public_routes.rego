@@ -36,14 +36,31 @@ risk_templates := [{
 
 current := object.get(input.route_table_context, "current", {})
 
+active_public_route[route] if {
+	route := object.get(input.route_table_context, "route_summaries", [])[_]
+	object.get(route, "state", "") == "active"
+	object.get(route, "destination", "") == "0.0.0.0/0"
+	object.get(route, "target_type", "") == "gateway"
+	startswith(object.get(route, "target_id", ""), "igw-")
+}
+
+active_public_route[route] if {
+	route := object.get(input.route_table_context, "route_summaries", [])[_]
+	object.get(route, "state", "") == "active"
+	object.get(route, "destination", "") == "::/0"
+	object.get(route, "target_type", "") == "gateway"
+	startswith(object.get(route, "target_id", ""), "igw-")
+}
+
 main_route_table if {
 	object.get(current, "is_main", false)
 }
 
 main_route_table_has_public_default_route if {
 	main_route_table
-	object.get(current, "has_default_route_to_internet_gateway", false)
+	count(active_public_route) > 0
 }
+
 
 violation[{"id": "route_table_main_public_route"}] if {
 	main_route_table_has_public_default_route

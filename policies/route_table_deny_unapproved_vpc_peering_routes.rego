@@ -34,19 +34,24 @@ risk_templates := [{
 	}
 }]
 
-vpc_peering_route[route] if {
+active_vpc_peering_route[route] if {
 	route := object.get(input.route_table_context, "route_summaries", [])[_]
+	object.get(route, "state", "") == "active"
 	object.get(route, "target_type", "") == "vpc_peering_connection"
 }
 
+vpc_peering_route[route] if {
+	active_vpc_peering_route[route]
+}
+
 approved_vpc_peering_route(route) if {
+	active_vpc_peering_route[route]
 	approved_id := data.approved_route_table_vpc_peering_connection_ids[_]
 	object.get(route, "target_id", "") == approved_id
 }
 
 unapproved_vpc_peering_route[route] if {
-	route := object.get(input.route_table_context, "route_summaries", [])[_]
-	object.get(route, "target_type", "") == "vpc_peering_connection"
+	active_vpc_peering_route[route]
 	not approved_vpc_peering_route(route)
 }
 

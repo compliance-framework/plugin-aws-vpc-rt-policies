@@ -34,19 +34,24 @@ risk_templates := [{
 	}
 }]
 
-transit_gateway_route[route] if {
+active_transit_gateway_route[route] if {
 	route := object.get(input.route_table_context, "route_summaries", [])[_]
+	object.get(route, "state", "") == "active"
 	object.get(route, "target_type", "") == "transit_gateway"
 }
 
+transit_gateway_route[route] if {
+	active_transit_gateway_route[route]
+}
+
 approved_transit_gateway_route(route) if {
+	active_transit_gateway_route[route]
 	approved_id := data.approved_route_table_transit_gateway_ids[_]
 	object.get(route, "target_id", "") == approved_id
 }
 
 unapproved_transit_gateway_route[route] if {
-	route := object.get(input.route_table_context, "route_summaries", [])[_]
-	object.get(route, "target_type", "") == "transit_gateway"
+	active_transit_gateway_route[route]
 	not approved_transit_gateway_route(route)
 }
 

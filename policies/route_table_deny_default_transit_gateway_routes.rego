@@ -34,11 +34,24 @@ risk_templates := [{
 	}
 }]
 
-current := object.get(input.route_table_context, "current", {})
+active_default_transit_gateway_route[route] if {
+	route := object.get(input.route_table_context, "route_summaries", [])[_]
+	object.get(route, "state", "") == "active"
+	object.get(route, "destination", "") == "0.0.0.0/0"
+	object.get(route, "target_type", "") == "transit_gateway"
+}
+
+active_default_transit_gateway_route[route] if {
+	route := object.get(input.route_table_context, "route_summaries", [])[_]
+	object.get(route, "state", "") == "active"
+	object.get(route, "destination", "") == "::/0"
+	object.get(route, "target_type", "") == "transit_gateway"
+}
 
 has_default_transit_gateway_route if {
-	object.get(current, "has_default_route_to_transit_gateway", false)
+	count(active_default_transit_gateway_route) > 0
 }
+
 
 violation[{"id": "route_table_default_transit_gateway_route"}] if {
 	has_default_transit_gateway_route
