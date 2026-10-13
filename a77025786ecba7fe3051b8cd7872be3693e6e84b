@@ -1,0 +1,2 @@
+lisa-design:
+W3-S2-T02: callers copied from plugin-local-ssh-policies#14 (reviewed+merged master policy repo), equal to mock-plugin-policies-1 with pins at v1.5.2 and push branches [master]. Manifest seeded 0.1.0 = releases/latest v0.1.0 (tag vX.Y.Z, ancestor of master), so no bootstrap-sha. No version.txt added (release-please adds it). README has no release section, left unchanged. Self-review pass 1: no findings.
