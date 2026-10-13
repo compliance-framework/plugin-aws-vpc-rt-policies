@@ -12,14 +12,14 @@ risk_templates := [{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-668",
 			"title": "Exposure of Resource to Wrong Sphere",
-			"url": "https://cwe.mitre.org/data/definitions/668.html"
+			"url": "https://cwe.mitre.org/data/definitions/668.html",
 		},
 		{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-284",
 			"title": "Improper Access Control",
-			"url": "https://cwe.mitre.org/data/definitions/284.html"
-		}
+			"url": "https://cwe.mitre.org/data/definitions/284.html",
+		},
 	],
 	"remediation": {
 		"title": "Constrain transit gateway default routing",
@@ -29,9 +29,9 @@ risk_templates := [{
 			{"title": "Replace broad default TGW routes with specific destination CIDR routes where possible"},
 			{"title": "Confirm the transit gateway and downstream route tables are approved for the associated subnet traffic"},
 			{"title": "Validate segmentation controls in connected VPCs or on-premises networks"},
-			{"title": "Document any exception that permits default routing through a transit gateway"}
-		]
-	}
+			{"title": "Document any exception that permits default routing through a transit gateway"},
+		],
+	},
 }]
 
 active_default_transit_gateway_route[route] if {
@@ -52,10 +52,9 @@ has_default_transit_gateway_route if {
 	count(active_default_transit_gateway_route) > 0
 }
 
-
 violation[{"id": "route_table_default_transit_gateway_route"}] if {
 	has_default_transit_gateway_route
-	not data.allow_route_table_default_transit_gateway_routes
+	not data.allow_route_table_default_transit_gateway_routes # regal ignore:unresolved-reference
 }
 
 skip_reason := "Route table has no default route to a transit gateway" if {

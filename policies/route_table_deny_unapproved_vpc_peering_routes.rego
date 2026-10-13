@@ -12,14 +12,14 @@ risk_templates := [{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-668",
 			"title": "Exposure of Resource to Wrong Sphere",
-			"url": "https://cwe.mitre.org/data/definitions/668.html"
+			"url": "https://cwe.mitre.org/data/definitions/668.html",
 		},
 		{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-284",
 			"title": "Improper Access Control",
-			"url": "https://cwe.mitre.org/data/definitions/284.html"
-		}
+			"url": "https://cwe.mitre.org/data/definitions/284.html",
+		},
 	],
 	"remediation": {
 		"title": "Restrict VPC peering route targets",
@@ -29,9 +29,9 @@ risk_templates := [{
 			{"title": "Confirm whether each peering route is required and approved"},
 			{"title": "Remove routes to unapproved peering connections"},
 			{"title": "Add approved peering connection IDs to policy data only after architectural review"},
-			{"title": "Validate peer VPC security groups, NACLs, and route tables after changes"}
-		]
-	}
+			{"title": "Validate peer VPC security groups, NACLs, and route tables after changes"},
+		],
+	},
 }]
 
 active_vpc_peering_route[route] if {
@@ -46,7 +46,7 @@ vpc_peering_route[route] if {
 
 approved_vpc_peering_route(route) if {
 	active_vpc_peering_route[route]
-	approved_id := data.approved_route_table_vpc_peering_connection_ids[_]
+	approved_id := data.approved_route_table_vpc_peering_connection_ids[_] # regal ignore:unresolved-reference
 	object.get(route, "target_id", "") == approved_id
 }
 
@@ -67,6 +67,6 @@ title := "Route table VPC peering routes should target approved peering connecti
 	count(vpc_peering_route) > 0
 }
 
-description := sprintf("Route tables that provide cross-VPC access through peering should only target approved VPC peering connection IDs: %s", [concat(", ", data.approved_route_table_vpc_peering_connection_ids)]) if {
+description := sprintf("Route tables that provide cross-VPC access through peering should only target approved VPC peering connection IDs: %s", [concat(", ", data.approved_route_table_vpc_peering_connection_ids)]) if { # regal ignore:unresolved-reference
 	count(vpc_peering_route) > 0
 }

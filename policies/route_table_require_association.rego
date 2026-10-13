@@ -20,7 +20,7 @@ associated if {
 
 violation[{}] if {
 	not associated
-	not data.allow_unassociated_route_tables
+	not data.allow_unassociated_route_tables # regal ignore:unresolved-reference
 }
 
 title := "Route table should be associated with at least one subnet or gateway"

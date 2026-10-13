@@ -12,14 +12,14 @@ risk_templates := [{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-668",
 			"title": "Exposure of Resource to Wrong Sphere",
-			"url": "https://cwe.mitre.org/data/definitions/668.html"
+			"url": "https://cwe.mitre.org/data/definitions/668.html",
 		},
 		{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-284",
 			"title": "Improper Access Control",
-			"url": "https://cwe.mitre.org/data/definitions/284.html"
-		}
+			"url": "https://cwe.mitre.org/data/definitions/284.html",
+		},
 	],
 	"remediation": {
 		"title": "Remove implicit public routing from the main route table",
@@ -29,9 +29,9 @@ risk_templates := [{
 			{"title": "Move public default routes to explicitly associated public-subnet route tables"},
 			{"title": "Explicitly associate subnets with the intended route tables to avoid inheriting main-table routes"},
 			{"title": "Validate security groups and NACLs for any subnet that remains internet-routed"},
-			{"title": "Document and approve any exception that keeps public routing on the main route table"}
-		]
-	}
+			{"title": "Document and approve any exception that keeps public routing on the main route table"},
+		],
+	},
 }]
 
 current := object.get(input.route_table_context, "current", {})
@@ -53,7 +53,7 @@ active_public_route[route] if {
 }
 
 main_route_table if {
-	object.get(current, "is_main", false)
+	object.get(current, "is_main", false) != false
 }
 
 main_route_table_has_public_default_route if {
@@ -61,10 +61,9 @@ main_route_table_has_public_default_route if {
 	count(active_public_route) > 0
 }
 
-
 violation[{"id": "route_table_main_public_route"}] if {
 	main_route_table_has_public_default_route
-	not data.allow_main_route_table_public_routes
+	not data.allow_main_route_table_public_routes # regal ignore:unresolved-reference
 }
 
 skip_reason := "Route table is not the main route table" if {
