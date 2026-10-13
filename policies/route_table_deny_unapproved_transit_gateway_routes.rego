@@ -12,14 +12,14 @@ risk_templates := [{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-668",
 			"title": "Exposure of Resource to Wrong Sphere",
-			"url": "https://cwe.mitre.org/data/definitions/668.html"
+			"url": "https://cwe.mitre.org/data/definitions/668.html",
 		},
 		{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-284",
 			"title": "Improper Access Control",
-			"url": "https://cwe.mitre.org/data/definitions/284.html"
-		}
+			"url": "https://cwe.mitre.org/data/definitions/284.html",
+		},
 	],
 	"remediation": {
 		"title": "Restrict transit gateway route targets",
@@ -29,9 +29,9 @@ risk_templates := [{
 			{"title": "Confirm whether each transit gateway route is required and approved"},
 			{"title": "Remove routes to unapproved transit gateways"},
 			{"title": "Add approved transit gateway IDs to policy data only after architectural review"},
-			{"title": "Validate connected network segmentation and route propagation after changes"}
-		]
-	}
+			{"title": "Validate connected network segmentation and route propagation after changes"},
+		],
+	},
 }]
 
 active_transit_gateway_route[route] if {
@@ -46,7 +46,7 @@ transit_gateway_route[route] if {
 
 approved_transit_gateway_route(route) if {
 	active_transit_gateway_route[route]
-	approved_id := data.approved_route_table_transit_gateway_ids[_]
+	approved_id := data.approved_route_table_transit_gateway_ids[_] # regal ignore:unresolved-reference
 	object.get(route, "target_id", "") == approved_id
 }
 
@@ -67,6 +67,6 @@ title := "Route table transit gateway routes should target approved transit gate
 	count(transit_gateway_route) > 0
 }
 
-description := sprintf("Route tables that provide cross-network access through transit gateways should only target approved transit gateway IDs: %s", [concat(", ", data.approved_route_table_transit_gateway_ids)]) if {
+description := sprintf("Route tables that provide cross-network access through transit gateways should only target approved transit gateway IDs: %s", [concat(", ", data.approved_route_table_transit_gateway_ids)]) if { # regal ignore:unresolved-reference
 	count(transit_gateway_route) > 0
 }

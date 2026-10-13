@@ -12,14 +12,14 @@ risk_templates := [{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-668",
 			"title": "Exposure of Resource to Wrong Sphere",
-			"url": "https://cwe.mitre.org/data/definitions/668.html"
+			"url": "https://cwe.mitre.org/data/definitions/668.html",
 		},
 		{
 			"system": "https://cwe.mitre.org",
 			"external_id": "CWE-284",
 			"title": "Improper Access Control",
-			"url": "https://cwe.mitre.org/data/definitions/284.html"
-		}
+			"url": "https://cwe.mitre.org/data/definitions/284.html",
+		},
 	],
 	"remediation": {
 		"title": "Restrict direct public internet routing",
@@ -29,9 +29,9 @@ risk_templates := [{
 			{"title": "Remove default routes to internet gateways where direct public routing is not required"},
 			{"title": "Use NAT gateways, VPC endpoints, or private connectivity for outbound-only access patterns"},
 			{"title": "Explicitly approve route tables that must retain direct public internet routes"},
-			{"title": "Validate associated subnets and workloads for public exposure after route changes"}
-		]
-	}
+			{"title": "Validate associated subnets and workloads for public exposure after route changes"},
+		],
+	},
 }]
 
 current := object.get(input.route_table_context, "current", {})
@@ -60,11 +60,10 @@ has_direct_public_internet_route if {
 	count(active_public_route) > 0
 }
 
-
 violation[{"id": "route_table_direct_public_route"}] if {
 	non_main_route_table
 	has_direct_public_internet_route
-	not data.allow_non_main_route_table_direct_internet_gateway_routes
+	not data.allow_non_main_route_table_direct_internet_gateway_routes # regal ignore:unresolved-reference
 }
 
 skip_reason := "Route table is the main route table" if {
