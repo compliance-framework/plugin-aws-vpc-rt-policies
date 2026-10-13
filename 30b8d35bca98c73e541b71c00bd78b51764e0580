@@ -1,0 +1,6 @@
+lisa-design:
+Fix errors only (user decision 2026-10-13): Regal warnings (99) left as they are.
+data.json references: line-scoped trailing `# regal ignore:unresolved-reference` (38 sites); no repo .regal config so CI keeps the shared one.
+deny_main_public_routes main_route_table: bare `object.get(current, "is_main", false)` rewritten as `!= false` (same truthiness incl. null/string/0 values); never `== true`.
+ci.yml is the mock-plugin-policies-1 caller verbatim except push branches: [master] (default branch is master).
+Behaviour proven unchanged: opa eval data.compliance_framework on master vs branch, 74 inputs x 3 data variants, non-test keys identical, all 32 tests true.
